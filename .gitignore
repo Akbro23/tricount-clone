@@ -1,0 +1,16 @@
+# .gitignore
+
+# Virtual environment
+myenv/
+
+# Config files
+*.conf
+
+# Password file
+.my_pgpass
+
+# cache files
+*/__pycache__/*
+
+# migration files
+*/migrations/*

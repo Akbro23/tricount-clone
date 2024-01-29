@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+    <h1>{{ activity.name }}</h1>
+
+    <h2>Balances</h2>
+    <ul>
+    {% for participant in participants %}
+        <li>{{ participant.username }}: {{ participant.balance }}$</li>
+    {% endfor %}
+    </ul>
+
+    <h2>Reimbursements</h2>
+    <ul>
+        {% for debtor, creditor, amount in reimbursements %}
+            <li>{{ debtor }} to {{ creditor }}: {{ amount }}$</li>
+        {% endfor %}
+    </ul>
+    
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+    <h1>{{ activity.name }}</h1>
+    <h2>{{ expense.title }}</h2>
+    <p>{{ expense.amount }}$ paid by {{ payer.username }}</p>
+
+{% endblock %}
