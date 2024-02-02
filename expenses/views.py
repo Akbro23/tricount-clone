@@ -2,8 +2,9 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Sum, Q
 from django.urls import reverse
 
+from django.contrib.auth.models import User
 from .models import Activity, Expense
-from .forms import ExpenseForm
+from .forms import AddParticipantForm, ExpenseForm
 
 
 
@@ -17,13 +18,16 @@ def activity(request, activity_id):
     expenses = activity.expenses.all()
 
     participants_number = participants.count()
-    total_amount = round(expenses.aggregate(Sum('amount'))['amount__sum'], 2)
-    amount_per_participant = round(total_amount / participants_number, 2)
+    total_amount = expenses.aggregate(Sum('amount', default=0))['amount__sum']
+    amount_per_participant = total_amount / participants_number
 
 
-    form = ExpenseForm()
-    form.fields['payer'].queryset = participants
-    
+    initial_data = {'activity': activity}
+    addParticipantForm = AddParticipantForm(initial=initial_data)
+    addParticipantForm.fields['participant'].queryset = User.objects.exclude(activity=activity)
+
+    expenseForm = ExpenseForm()
+    expenseForm.fields['payer'].queryset = participants
     
 
     context = {
@@ -33,7 +37,8 @@ def activity(request, activity_id):
         'participants_number': participants_number,
         'total_amount': total_amount,
         'amount_per_participant': amount_per_participant,
-        'form': form,
+        'addParticipantForm': addParticipantForm,
+        'expenseForm': expenseForm,
     }
 
     return render(request, 'expenses/activity.html', context)
@@ -42,8 +47,8 @@ def activity(request, activity_id):
 def balance(request, activity_id):
     activity = get_object_or_404(Activity, pk=activity_id)
     participants_number = activity.participants.count()
-    total_amount = activity.expenses.aggregate(Sum('amount'))['amount__sum']
-    amount_per_participant = round(total_amount / participants_number, 2)
+    total_amount = activity.expenses.aggregate(Sum('amount', default=0))['amount__sum']
+    amount_per_participant = total_amount / participants_number
 
     amount_spent = Sum('expense__amount', default=0, filter=Q(expense__activity=activity_id))
     participants = activity.participants.annotate(balance=amount_spent - amount_per_participant)
@@ -72,19 +77,32 @@ def balance(request, activity_id):
         'participants': participants,
         'reimbursements': reimbursements,
     }
+
     return render(request, 'expenses/balance.html', context)
 
 
-def create_expense(request, activity_id):
+def add_participant(request, activity_id):  
     if request.method == 'POST':
         activity = get_object_or_404(Activity, pk=activity_id)
-        expense = Expense(activity=activity)
-        form = ExpenseForm(request.POST, instance=expense)
+        form = AddParticipantForm(request.POST, instance=activity)
         if form.is_valid():
             form.save()
+
             return redirect(reverse('expenses:activity', args=[activity_id]))
-        else:
-            print(form.errors)
+    
+
+def remove_participant(request, activity_id, participant_id):  
+    if request.method == 'POST':
+        activity = get_object_or_404(Activity, pk=activity_id)
+        participant = get_object_or_404(User, pk=participant_id)
+        
+        if participant in activity.participants.all():
+            payers = activity.expenses.values('payer').distinct()
+            if not payers.filter(payer=participant).exists():
+                activity.participants.remove(participant)
+                activity.save()
+            
+        return redirect(reverse('expenses:activity', args=[activity_id]))
 
 
 def expense(request, expense_id):
@@ -97,4 +115,24 @@ def expense(request, expense_id):
         'payer': payer,
         'activity': activity,
     }
+    
     return render(request, 'expenses/expense.html', context)
+
+
+def create_expense(request, activity_id):
+    if request.method == 'POST':
+        activity = get_object_or_404(Activity, pk=activity_id)
+        expense = Expense(activity=activity)
+        form = ExpenseForm(request.POST, instance=expense)
+        if form.is_valid():
+            form.save()
+
+        return redirect(reverse('expenses:activity', args=[activity_id]))
+
+
+def delete_expense(request, expense_id):   
+    if request.method == 'POST':
+        expense = get_object_or_404(Expense, pk=expense_id)
+        activity_id = expense.activity.id
+        expense.delete()
+        return redirect(reverse('expenses:activity', args=[activity_id]))

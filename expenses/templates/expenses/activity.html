@@ -1,29 +1,54 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>{{ activity.name }}</h1>
+    <h1><a href="{% url 'expenses:activity' activity.id %}">{{ activity.name }}</a></h1>
     <h3>created {{ activity.date_created }}</h3>
+    <h2><a href="{% url 'expenses:balance' activity.id %}">Balance</a></h2>
+
     <h2>Participants: {{ participants_number }}</h2>
     <ul>
     {% for participant in participants %}
-        <li>{{ participant.username }}</li>
+        <li>
+            {{ participant.username }}
+            <form method="post" action="{% url 'expenses:remove_participant' activity.id participant.id %}">
+                {% csrf_token %}
+                <input type="submit" value="Remove">
+            </form>
+        </li>
     {% endfor %}
     </ul>
 
+    <form action="{% url 'expenses:add_participant' activity.id %}" method="post">
+        {% csrf_token %}
+        {{ addParticipantForm }}
+        <input type="submit" value="Add Participant">
+    </form>
+
     <h2>Expenses</h2>
-    <h3>Total amount: {{ total_amount }}$</h3>
-    <h3>Amount per person: {{ amount_per_participant }}$</h3>
-    <h3><a href="{% url 'expenses:balance' activity.id %}">Balance</a></h3>
+    <h3>Total amount: {{ total_amount|floatformat:2 }}$</h3>
+    <h3>Amount per person: {{ amount_per_participant|floatformat:2 }}$</h3>
     
     <form action="{% url 'expenses:create_expense' activity.id %}" method="post">
         {% csrf_token %}
-        {{ form }}
-        <input type="submit" value="Add">
-        </form>
+        {{ expenseForm }}
+        <input type="submit" value="Add Expense">
+    </form>
 
     <ul>
     {% for expense in expenses %}
-        <li><a href="{% url 'expenses:expense' expense.id %}">{{ expense.title }}</a> {{ expense.amount }}$ paid by {{ expense.payer.username }}</li>
+        <li>
+            <a href="{% url 'expenses:expense' expense.id %}">
+                {{ expense.title }} 
+                {{ expense.amount|floatformat:2 }}$ 
+            </a> 
+
+            paid by {{ expense.payer.username }}
+            
+            <form method="post" action="{% url 'expenses:delete_expense' expense.id %}">
+                {% csrf_token %}
+                <input type="submit" value="Delete">
+            </form>
+        </li>
     {% endfor %}
     </ul>
     
