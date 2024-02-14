@@ -11,7 +11,13 @@ from .forms import AddParticipantForm, ExpenseForm
 
 
 def dashboard(request):
-    return render(request, 'expenses/dashboard.html')
+    user = request.user
+    context = {}
+    if user.is_authenticated:
+        activites = Activity.objects.filter(participants=user)
+        context['activites'] = activites
+
+    return render(request, 'expenses/dashboard.html', context)
 
 
 def register(request):
@@ -50,7 +56,6 @@ def activity(request, activity_id):
         'activity': activity,
         'participants': participants,
         'expenses': expenses,
-        'participants_number': participants_number,
         'total_amount': total_amount,
         'amount_per_participant': amount_per_participant,
         'addParticipantForm': addParticipantForm,

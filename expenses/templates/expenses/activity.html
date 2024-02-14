@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
 
 {% block content %}
+    <a href="{% url 'expenses:dashboard' %}">Back to dashboard</a>
     <h1><a href="{% url 'expenses:activity' activity.id %}">{{ activity.name }}</a></h1>
     <h3>created {{ activity.date_created }}</h3>
     <h2><a href="{% url 'expenses:balance' activity.id %}">Balance</a></h2>
 
-    <h2>Participants: {{ participants_number }}</h2>
+    <h2>Participants: {{ participants.count }}</h2>
     <ul>
     {% for participant in participants %}
         <li>

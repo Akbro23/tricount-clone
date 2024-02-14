@@ -5,6 +5,18 @@
 
     <div>
         {% if user.is_authenticated %}
+            <h2>Activites: {{ activites.count }}</h2>
+            {% for activity in activites %}
+                <h3>
+                    <a href="{% url 'expenses:activity' activity.id %}">
+                        {{ activity.name }}
+                    </a>
+                </h3>
+                <h4>participants: {{ activity.participants.count }}</h4>
+
+            {% endfor %}
+
+
             <form action="{% url 'logout' %}" method="post">
                 {% csrf_token %}
                 <button type="submit">Logout</button>

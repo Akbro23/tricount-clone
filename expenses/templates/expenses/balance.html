@@ -1,21 +1,27 @@
-{% extends 'base.html' %}
-
-
-{% block content %}
-    <h1><a href="{% url 'expenses:activity' activity.id %}">{{ activity.name }}</a></h1>
-
-    <h2>Balances</h2>
-    <ul>
+{% extends 'base.html' %} {% block content %}
+<a href="{% url 'expenses:dashboard' %}">Back to dashboard</a>
+<h1>
+    <a href="{% url 'expenses:activity' activity.id %}">{{ activity.name }}</a>
+</h1>
+<h2>
+    <a href="{% url 'expenses:activity' activity.id %}"
+        >Back to activity details</a
+    >
+</h2>
+<h2>Balances</h2>
+<ul>
     {% for participant in participants %}
-        <li>{{ participant.username }}: {{ participant.balance|floatformat:2 }}$</li>
+    <li>
+        {{ participant.username }}: {{ participant.balance|floatformat:2 }}$
+    </li>
     {% endfor %}
-    </ul>
+</ul>
 
-    <h2>Reimbursements</h2>
-    <ul>
-        {% for debtor, creditor, amount in reimbursements %}
-            <li>{{ debtor }} to {{ creditor }}: {{ amount|floatformat:2 }}$</li>
-        {% endfor %}
-    </ul>
-    
+<h2>Reimbursements</h2>
+<ul>
+    {% for debtor, creditor, amount in reimbursements %}
+    <li>{{ debtor }} to {{ creditor }}: {{ amount|floatformat:2 }}$</li>
+    {% endfor %}
+</ul>
+
 {% endblock %}
