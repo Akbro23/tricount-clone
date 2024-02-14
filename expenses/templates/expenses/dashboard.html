@@ -2,4 +2,17 @@
 
 {% block content %}
     Hello, {{ user.username|default:'Guest' }}!
+
+    <div>
+        {% if user.is_authenticated %}
+            <form action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+                <button type="submit">Logout</button>
+            </form>
+        {% else %}
+            <a href="{% url 'login' %}">Login</a>
+            <a href="{% url 'expenses:register' %}">Register</a>
+        {% endif %}
+    </div>
+    
 {% endblock %}
