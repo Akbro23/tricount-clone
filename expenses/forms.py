@@ -44,6 +44,13 @@ class ExpenseForm(forms.ModelForm):
         rounded_amount = round(amount, 2)
         return rounded_amount
     
+
+class ActivityForm(forms.ModelForm):
+    class Meta:
+        model = Activity
+        fields = ['name']
+
+    
         
         
         

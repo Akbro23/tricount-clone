@@ -6,7 +6,7 @@ from django.contrib.auth.forms import UserCreationForm
 
 from django.contrib.auth.models import User
 from .models import Activity, Expense
-from .forms import AddParticipantForm, ExpenseForm
+from .forms import AddParticipantForm, ExpenseForm, ActivityForm
 
 
 
@@ -14,8 +14,12 @@ def dashboard(request):
     user = request.user
     context = {}
     if user.is_authenticated:
-        activites = Activity.objects.filter(participants=user)
-        context['activites'] = activites
+        activities = Activity.objects.filter(participants=user)
+        form = ActivityForm()
+        context = {
+            'activities': activities,
+            'form': form,
+        }
 
     return render(request, 'expenses/dashboard.html', context)
 
@@ -32,6 +36,18 @@ def register(request):
             user = form.save()
             login(request, user)
             return redirect(reverse('expenses:dashboard'))
+
+
+def create_activity(request):
+    if request.method == 'POST' and request.user.is_authenticated:
+        activity = Activity()
+        activity.save()
+        activity.participants.add(request.user)
+        form = ActivityForm(request.POST, instance=activity)
+        if form.is_valid():
+            form.save()
+
+    return redirect(reverse('expenses:dashboard'))
 
 
 def activity(request, activity_id):
@@ -121,7 +137,13 @@ def remove_participant(request, activity_id, participant_id):
             payers = activity.expenses.values('payer').distinct()
             if not payers.filter(payer=participant).exists():
                 activity.participants.remove(participant)
+                if activity.participants.count() == 0:
+                    activity.delete()
+                    return redirect(reverse('expenses:dashboard'))
+
                 activity.save()
+                if request.user == participant:
+                    return redirect(reverse('expenses:dashboard'))               
             
     return redirect(reverse('expenses:activity', args=[activity_id]))
 

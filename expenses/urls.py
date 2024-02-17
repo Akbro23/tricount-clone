@@ -7,6 +7,7 @@ app_name = 'expenses'
 urlpatterns = [   
     path('', views.dashboard, name='dashboard'),
     path('register/', views.register, name='register'),
+    path('create_activity/', views.create_activity, name='create_activity'),
     path('activity/<int:activity_id>/', views.activity, name='activity'),
     path('activity/<int:activity_id>/balance/', views.balance, name='balance'),
     path('activity/<int:activity_id>/add_participant/', views.add_participant, name='add_participant'),
