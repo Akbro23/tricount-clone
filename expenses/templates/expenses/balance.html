@@ -46,7 +46,11 @@
                 <tbody>
                     {% for participant in participants %}
                     <tr>
-                        <td>{{ participant.username }}</td>
+                        <td
+                            class="{% if request.user == participant %}bg-primary{% endif %}"
+                        >
+                            {{ participant.username }}
+                        </td>
                         <td
                             class="{% if participant.balance >= 0 %}bg-success{% else %}bg-danger{% endif %}"
                         >
@@ -73,8 +77,16 @@
                 <tbody>
                     {% for debtor, creditor, amount in reimbursements %}
                     <tr>
-                        <td>{{ debtor }}</td>
-                        <td>{{ creditor }}</td>
+                        <td
+                            class="{% if request.user.username == debtor %}bg-primary{% endif %}"
+                        >
+                            {{ debtor }}
+                        </td>
+                        <td
+                            class="{% if request.user.username == creditor %}bg-primary{% endif %}"
+                        >
+                            {{ creditor }}
+                        </td>
                         <td>{{ amount|floatformat:2 }}$</td>
                     </tr>
                     {% endfor %}
