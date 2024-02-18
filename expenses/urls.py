@@ -5,7 +5,8 @@ from . import views
 
 app_name = 'expenses'
 urlpatterns = [   
-    path('', views.dashboard, name='dashboard'),
+    path('', views.index, name='index'),
+    path('dashboard/', views.dashboard, name='dashboard'),
     path('register/', views.register, name='register'),
     path('create_activity/', views.create_activity, name='create_activity'),
     path('activity/<int:activity_id>/', views.activity, name='activity'),

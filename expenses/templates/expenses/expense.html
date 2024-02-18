@@ -1,9 +1,42 @@
-{% extends 'base.html' %}
-
-
-{% block content %}
-    <h1>{{ activity.name }}</h1>
-    <h2>{{ expense.title }}</h2>
-    <p>{{ expense.amount }}$ paid by {{ payer.username }}</p>
-
-{% endblock %}
+{% extends 'base.html' %} {% block content %}
+<div class="container">
+    <div class="container">
+        <a
+            href="{% url 'expenses:dashboard' %}"
+            class="text-reset"
+            >Back to dashboard</a
+        >
+        <div class="row pt-4">
+            <div class="col-md-12">
+                <h1>Expense details</h1>
+                <hr />
+            </div>
+        </div>
+        <button class="btn btn-info text-white mb-3">
+            <h3>
+                <a
+                    href="{% url 'expenses:activity' activity.id %}"
+                    class="text-reset text-decoration-none"
+                    >Back to Activity</a
+                >
+            </h3>
+        </button>
+        <table class="table mt-3">
+            <thead>
+                <tr>
+                    <th scope="col">Activity</th>
+                    <th scope="col">Item</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Paid by</th>
+                </tr>
+            </thead>
+            <tbody>
+                <td>{{ activity.name }}</td>
+                <td>{{ expense.title }}</td>
+                <td>{{ expense.amount }}$</td> 
+                <td>{{ payer.username }}</td>
+            </tbody>
+        </table>
+    </div>
+    {% endblock %}
+</div>

@@ -1,0 +1,42 @@
+{% extends 'base.html' %} {% block content %}
+<section class="hero-section bg-dark py-5">
+    <div class="container">
+        <div class="hero-content text-center text-white">
+            <h1 class="display-4">Welcome to Our App</h1>
+            <p class="lead">
+                Manage your group finances with ease. Get started today!
+            </p>
+            <a
+                href="{% url 'login' %}"
+                class="btn btn-primary btn-lg btn-get-started"
+                >Get Started</a
+            >
+        </div>
+    </div>
+</section>
+
+<section class="feature-section bg-light">
+    <div class="container text-center py-5">
+        <div class="row justify-content-center">
+            <div class="card col-md-3 py-5 mx-3">
+                <h3 class="card-title">Track Expenses</h3>
+                <p>
+                    Keep track of expenses and payments made within your group.
+                </p>
+            </div>
+            <div class="card col-md-3 py-5 mx-3">
+                <h3>Split Bills</h3>
+                <p>Easily split bills and expenses among group members.</p>
+            </div>
+            <div class="card col-md-3 py-5 mx-3">
+                <h3>Settle Debts</h3>
+                <p>
+                    Automatically calculate and settle debts among group
+                    members.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

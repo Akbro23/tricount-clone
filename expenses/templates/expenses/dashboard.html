@@ -1,35 +1,45 @@
-{% extends 'base.html' %}
-
-{% block content %}
-    Hello, {{ user.username|default:'Guest' }}!
-
-    <div>
-        {% if user.is_authenticated %}
-            <form action="{% url 'expenses:create_activity' %}" method="post">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <input type="submit" value="Create activity">
-            </form>
-            <h2>Activites: {{ activities.count }}</h2>
-            {% for activity in activities %}
-                <h3>
-                    <a href="{% url 'expenses:activity' activity.id %}">
-                        {{ activity.name }}
-                    </a>
-                </h3>
-                <h4>participants: {{ activity.participants.count }}</h4>
-
-            {% endfor %}
-
-
-            <form action="{% url 'logout' %}" method="post">
-                {% csrf_token %}
-                <button type="submit">Logout</button>
-            </form>
-        {% else %}
-            <a href="{% url 'login' %}">Login</a>
-            <a href="{% url 'expenses:register' %}">Register</a>
-        {% endif %}
+{% extends 'base.html' %} {% block content %}
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-md-6">
+            <h2>Welcome, {{ user.username }}</h3>
+        </div>
     </div>
+
+    <div class="card col-md-3 bg-dark text-center text-white mt-4">
+        <h3 class="card-header bg-primary mb-3">Create New Activity</h3>
+        <form action="{% url 'expenses:create_activity' %}" method="post">
+            {% csrf_token %} {{ form.as_p }}
+            <button
+                type="submit"
+                class="btn btn-light mb-3 mx-3"
+            >
+                Create
+            </button>
+        </form>
+    </div>
+
     
+    <h2 class="my-3">Your Activites: {{ activities.count }}</h2> 
+    <div class="container mt-3">           
+        <div class="d-flex flex-wrap">
+            {% for activity in activities %}
+                <div class="card col-md-3 mx-3 my-2 text-center bg-dark text-white">
+                    <a
+                        href="{% url 'expenses:activity' activity.id %}"
+                        class="text-reset text-decoration-none"
+                    >
+                        <h3 class="card-header bg-success">
+                            {{ activity.name }}
+                        </h3>
+                        <p class="card-text py-3">
+                            participants: {{ activity.participants.count }}
+                        </p>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

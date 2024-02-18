@@ -1,27 +1,87 @@
 {% extends 'base.html' %} {% block content %}
-<a href="{% url 'expenses:dashboard' %}">Back to dashboard</a>
-<h1>
-    <a href="{% url 'expenses:activity' activity.id %}">{{ activity.name }}</a>
-</h1>
-<h2>
-    <a href="{% url 'expenses:activity' activity.id %}"
-        >Back to activity details</a
+<div class="container">
+    <a
+        href="{% url 'expenses:dashboard' %}"
+        class="text-reset"
+        >Back to dashboard</a
     >
-</h2>
-<h2>Balances</h2>
-<ul>
-    {% for participant in participants %}
-    <li>
-        {{ participant.username }}: {{ participant.balance|floatformat:2 }}$
-    </li>
-    {% endfor %}
-</ul>
+    <div class="row pt-4">
+        <div class="col-md-12">
+            <h1>Balance information</h1>
+            <hr />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <h1>
+                <a
+                    href="{% url 'expenses:activity' activity.id %}"
+                    class="text-reset text-decoration-none"
+                    >{{ activity.name }}</a
+                >
+            </h1>
+            <p>Created {{ activity.date_created }}</p>
+        </div>
+    </div>
+    <button class="btn btn-info text-white mb-3">
+        <h3>
+            <a
+                href="{% url 'expenses:activity' activity.id %}"
+                class="text-reset text-decoration-none"
+                >Back to Details</a
+            >
+        </h3>
+    </button>
 
-<h2>Reimbursements</h2>
-<ul>
-    {% for debtor, creditor, amount in reimbursements %}
-    <li>{{ debtor }} to {{ creditor }}: {{ amount|floatformat:2 }}$</li>
-    {% endfor %}
-</ul>
+    <h2>Balances</h2>
+    <div class="row justify-content-center">
+        <div class="col-md-9 mt-4">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Participant</th>
+                        <th scope="col">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for participant in participants %}
+                    <tr>
+                        <td>{{ participant.username }}</td>
+                        <td
+                            class="{% if participant.balance >= 0 %}bg-success{% else %}bg-danger{% endif %}"
+                        >
+                            {{ participant.balance|floatformat:2 }}$
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <h2>Reimbursements</h2>
+    <div class="row justify-content-center">
+        <div class="col-md-9 mt-4">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">From</th>
+                        <th scope="col">To</th>
+                        <th scope="col">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for debtor, creditor, amount in reimbursements %}
+                    <tr>
+                        <td>{{ debtor }}</td>
+                        <td>{{ creditor }}</td>
+                        <td>{{ amount|floatformat:2 }}$</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
 {% endblock %}

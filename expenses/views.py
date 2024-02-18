@@ -3,13 +3,21 @@ from django.db.models import Sum, Q
 from django.urls import reverse
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.decorators import login_required
 
 from django.contrib.auth.models import User
 from .models import Activity, Expense
 from .forms import AddParticipantForm, ExpenseForm, ActivityForm
 
 
+def index(request):
+    if request.user.is_authenticated:
+        return redirect(reverse('expenses:dashboard'))
+    else:
+        return render(request, 'index.html')
 
+
+@login_required
 def dashboard(request):
     user = request.user
     context = {}

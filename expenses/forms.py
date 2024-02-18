@@ -34,7 +34,7 @@ class AddParticipantForm(forms.ModelForm):
 class ExpenseForm(forms.ModelForm):
     class Meta:
         model = Expense
-        fields = ['payer', 'amount', 'title']
+        fields = ['payer', 'title', 'amount']
 
 
     def clean_amount(self):

@@ -1,57 +1,144 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {% block content %}
+<div class="container">
+    <a
+        href="{% url 'expenses:dashboard' %}"
+        class="text-reset"
+        >Back to dashboard</a
+    >
+    <div class="row pt-4">
+        <div class="col-md-12">
+            <h1>Activity details</h1>
+            <hr />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <h1>
+                <a
+                    href="{% url 'expenses:activity' activity.id %}"
+                    class="text-reset text-decoration-none"
+                    >{{ activity.name }}</a
+                >
+            </h1>
+            <p>Created {{ activity.date_created }}</p>
+        </div>
+    </div>
+    <button class="btn btn-info text-white mb-3">
+        <h3>
+            <a
+                href="{% url 'expenses:balance' activity.id %}"
+                class="text-reset text-decoration-none"
+                >Check Balance</a
+            >
+        </h3>
+    </button>
 
-{% block content %}
-    <a href="{% url 'expenses:dashboard' %}">Back to dashboard</a>
-    <h1><a href="{% url 'expenses:activity' activity.id %}">{{ activity.name }}</a></h1>
-    <h3>created {{ activity.date_created }}</h3>
-    <h2><a href="{% url 'expenses:balance' activity.id %}">Balance</a></h2>
-
-    <h2>Participants: {{ participants.count }}</h2>
-    <ul>
-    {% for participant in participants %}
-        <li>
-            {{ participant.username }}
-            <form method="post" action="{% url 'expenses:remove_participant' activity.id participant.id %}">
-                {% csrf_token %}
-                <input type="submit" value="Remove">
-            </form>
-        </li>
-    {% endfor %}
-    </ul>
-
-    <form action="{% url 'expenses:add_participant' activity.id %}" method="post">
-        {% csrf_token %}
-        {{ addParticipantForm }}
-        <input type="submit" value="Add Participant">
-    </form>
-
-    <h2>Expenses</h2>
-    <h3>Total amount: {{ total_amount|floatformat:2 }}$</h3>
-    <h3>Amount per person: {{ amount_per_participant|floatformat:2 }}$</h3>
-    
-    <form action="{% url 'expenses:create_expense' activity.id %}" method="post">
-        {% csrf_token %}
-        {{ expenseForm }}
-        <input type="submit" value="Add Expense">
-    </form>
-
-    <ul>
-    {% for expense in expenses %}
-        <li>
-            <a href="{% url 'expenses:expense' expense.id %}">
-                {{ expense.title }} 
-                {{ expense.amount|floatformat:2 }}$ 
-            </a> 
-
-            paid by {{ expense.payer.username }}
-            
-            <form method="post" action="{% url 'expenses:delete_expense' expense.id %}">
-                {% csrf_token %}
-                <input type="submit" value="Delete">
-            </form>
-        </li>
-    {% endfor %}
-    </ul>
-    
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Participants: {{ participants.count }}</h3>
+            <ul class="list-group">
+                {% for participant in participants %}
+                <li class="list-group-item">
+                    <div
+                        class="d-flex justify-content-between align-items-center"
+                    >
+                        {{ participant.username }}
+                        <form
+                            method="post"
+                            action="{% url 'expenses:remove_participant' activity.id participant.id %}"
+                        >
+                            {% csrf_token %}
+                            <input
+                                type="submit"
+                                value="Remove"
+                                class="btn btn-danger"
+                            />
+                        </form>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="col-md-4 mt-3">
+            <div class="card bg-dark text-center text-white mt-4">
+                <h3 class="card-header bg-primary mb-3">Add Participant</h3>
+                <form
+                    action="{% url 'expenses:add_participant' activity.id %}"
+                    method="post"
+                >
+                    {% csrf_token %} {{ addParticipantForm.as_p }}
+                    <input
+                        type="submit"
+                        value="Add"
+                        class="btn btn-light mb-3 mx-3"
+                    />
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-5">
+        <div class="col-md-6">
+            <h3>Expenses: {{ total_amount|floatformat:2 }}$</h3>
+            <h3>
+                Amount per person: {{ amount_per_participant|floatformat:2 }}$
+            </h3>
+            <table class="table mt-3">
+                <thead>
+                    <tr>
+                        <th scope="col">Item</th>
+                        <th scope="col">Amount</th>
+                        <th scope="col">Paid by</th>
+                        <th scope="col">Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for expense in expenses %}
+                    <tr>
+                        <td>
+                            <a
+                                href="{% url 'expenses:expense' expense.id %}"
+                                class="text-reset text-decoration-none"
+                            >
+                                {{ expense.title }}
+                            </a>
+                        </td>
+                        <td>{{ expense.amount|floatformat:2 }}$</td>
+                        <td>{{ expense.payer.username }}</td>
+                        <td>
+                            <form
+                                method="post"
+                                action="{% url 'expenses:delete_expense' expense.id %}"
+                            >
+                                {% csrf_token %}
+                                <input
+                                    type="submit"
+                                    value="Delete"
+                                    class="btn btn-danger"
+                                />
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-4 mt-4">
+            <div class="card bg-dark text-center text-white mt-5">
+                <h3 class="card-header bg-primary mb-3">Add Expense</h3>
+                <form
+                    action="{% url 'expenses:create_expense' activity.id %}"
+                    method="post"
+                >
+                    {% csrf_token %} {{ expenseForm.as_p }}
+                    <input
+                        type="submit"
+                        value="Add"
+                        class="btn btn-light mb-3 mx-3"
+                    />
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 {% endblock %}
